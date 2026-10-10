@@ -385,12 +385,13 @@ def wait_for_recovery(experiment: dict[str, Any], expected_mailhog_total: int) -
     raise ExperimentError(f"Recovery deadline exceeded; last state: {last_state}")
 
 
-def write_result(result: dict[str, Any]) -> None:
-    RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RESULT_PATH.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+def write_result(result: dict[str, Any], path: Path = RESULT_PATH) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 
 
-def run_experiment(experiment: dict[str, Any], *, dry_run: bool) -> int:
+def run_experiment(experiment: dict[str, Any], *, dry_run: bool,
+                   result_path: Path = RESULT_PATH) -> int:
     validate_manifest(experiment)
     lock_descriptor = acquire_lock()
     target = experiment["target"]
@@ -437,6 +438,11 @@ def run_experiment(experiment: dict[str, Any], *, dry_run: bool) -> int:
         termination = "planned_duration"
         termination_reason = "Experiment duration completed"
         while time.monotonic() - injection_started < int(experiment["durationSeconds"]):
+            if KILL_SWITCH.exists():
+                termination = "kill_switch"
+                termination_reason = "Manual kill switch engaged"
+                log("Safety controller requested rollback: Manual kill switch engaged")
+                break
             elapsed = time.monotonic() - injection_started
             unavailability_limit = float(
                 experiment["guardrails"]["maximumTargetUnavailableSeconds"]
@@ -452,6 +458,9 @@ def run_experiment(experiment: dict[str, Any], *, dry_run: bool) -> int:
             try:
                 sample = sample_guardrails(experiment, canary, elapsed)
                 result["samples"].append(sample)
+                if (sample["applicationTargets"].get(target) == 0
+                        and sample["rabbitmq"]["messagesReady"] >= 1):
+                    log("Fault evidence captured: target down and notification buffered")
                 log(
                     "Guardrails healthy: "
                     f"elapsed={elapsed:.1f}s, ready={sample['rabbitmq']['messagesReady']}, "
@@ -515,7 +524,7 @@ def run_experiment(experiment: dict[str, Any], *, dry_run: bool) -> int:
                     "recoveryWithinDeadline": result["recoverySeconds"]
                     <= int(experiment["recoveryDeadlineSeconds"]),
                 }
-                if all(result["assertions"].values()):
+                if all(result["assertions"].values()) and "error" not in result:
                     result["status"] = "passed"
                 else:
                     result["status"] = "failed"
@@ -524,7 +533,7 @@ def run_experiment(experiment: dict[str, Any], *, dry_run: bool) -> int:
         result["finishedAt"] = utc_timestamp()
         result["totalSeconds"] = round(time.monotonic() - started, 3)
         try:
-            write_result(result)
+            write_result(result, result_path)
         finally:
             signal.signal(signal.SIGINT, previous_sigint)
             signal.signal(signal.SIGTERM, previous_sigterm)
@@ -538,11 +547,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiment", type=Path, default=DEFAULT_EXPERIMENT)
     parser.add_argument("--dry-run", action="store_true", help="Validate safety preconditions only")
+    parser.add_argument("--result", type=Path, default=RESULT_PATH)
     arguments = parser.parse_args()
 
     try:
         experiment = json.loads(arguments.experiment.read_text(encoding="utf-8"))
-        return run_experiment(experiment, dry_run=arguments.dry_run)
+        return run_experiment(experiment, dry_run=arguments.dry_run, result_path=arguments.result)
     except (OSError, json.JSONDecodeError, ExperimentError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1

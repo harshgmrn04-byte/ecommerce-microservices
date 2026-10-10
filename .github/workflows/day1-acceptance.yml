@@ -1,0 +1,42 @@
+name: Day 1 live acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [test/day1-kill-switch]
+
+permissions:
+  contents: read
+
+jobs:
+  manual-kill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Start isolated application and monitoring
+        run: docker compose up -d --build --wait --wait-timeout 240
+      - name: Wait for Prometheus scrape observations
+        run: sleep 20
+      - name: Run manual kill-switch acceptance
+        run: python -m chaos.accept_manual_kill
+      - name: Collect sandbox state
+        if: always()
+        run: |
+          docker compose ps -a > chaos/results/day1-containers.txt
+          docker compose logs --no-color > chaos/results/day1-sandbox.log
+      - name: Retain live acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: day1-kill-switch-evidence
+          path: |
+            chaos/results/manual-kill-*.json
+            chaos/results/day1-*.txt
+            chaos/results/day1-*.log
+      - name: Remove disposable sandbox
+        if: always()
+        run: docker compose down --volumes

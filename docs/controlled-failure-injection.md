@@ -1,5 +1,8 @@
 # Controlled failure injection
 
+For the separate external file kill-switch test, see
+[Day 1 kill-switch acceptance](day1-kill-switch-acceptance.md).
+
 The first experiment stops only `notification-service` inside the local Docker
 Compose sandbox. Checkout remains available while RabbitMQ buffers one
 `order.created` event. The safety controller then starts the service and proves
