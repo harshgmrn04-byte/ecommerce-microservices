@@ -1,187 +1,180 @@
 {
     "root_group": {
+        "checks": {
+            "frontend is available": {
+                "name": "frontend is available",
+                "path": "::frontend is available",
+                "id": "5cf1025989a012f65ba6056fff2ee45f",
+                "passes": 15,
+                "fails": 0
+            },
+            "products are available": {
+                "name": "products are available",
+                "path": "::products are available",
+                "id": "c7a45428cb078c833a6a89a3d3e768c5",
+                "passes": 15,
+                "fails": 0
+            },
+            "categories are available": {
+                "id": "f36f054789307c03535d38983c25aae3",
+                "passes": 15,
+                "fails": 0,
+                "name": "categories are available",
+                "path": "::categories are available"
+            }
+        },
         "name": "",
         "path": "",
         "id": "d41d8cd98f00b204e9800998ecf8427e",
-        "groups": {},
-        "checks": {
-                "frontend is available": {
-                    "path": "::frontend is available",
-                    "id": "5cf1025989a012f65ba6056fff2ee45f",
-                    "passes": 595,
-                    "fails": 0,
-                    "name": "frontend is available"
-                },
-                "products are available": {
-                    "name": "products are available",
-                    "path": "::products are available",
-                    "id": "c7a45428cb078c833a6a89a3d3e768c5",
-                    "passes": 595,
-                    "fails": 0
-                },
-                "categories are available": {
-                    "id": "f36f054789307c03535d38983c25aae3",
-                    "passes": 595,
-                    "fails": 0,
-                    "name": "categories are available",
-                    "path": "::categories are available"
-                },
-                "checkout succeeds": {
-                    "name": "checkout succeeds",
-                    "path": "::checkout succeeds",
-                    "id": "6a974e7ed3012d373142d3329ff4a135",
-                    "passes": 6,
-                    "fails": 0
-                }
-            }
+        "groups": {}
     },
     "metrics": {
+        "http_req_waiting": {
+            "avg": 7.92781372340426,
+            "min": 0.425625,
+            "med": 2.533958,
+            "max": 245.302167,
+            "p(90)": 5.2164748,
+            "p(95)": 5.8781336999999985
+        },
+        "iteration_duration": {
+            "med": 1006.403896,
+            "max": 1010.659584,
+            "p(90)": 1007.3996715000001,
+            "p(95)": 1009.02962775,
+            "avg": 1006.5055255999999,
+            "min": 1004.583293
+        },
+        "http_req_blocked": {
+            "p(95)": 1.6987706999999999,
+            "avg": 0.33707359574468093,
+            "min": 0.001,
+            "med": 0.008417,
+            "max": 2.20925,
+            "p(90)": 1.1760748000000003
+        },
         "http_req_receiving": {
-            "avg": 0.11064122420524229,
-            "min": 0.013208,
-            "med": 0.078834,
-            "max": 2.000291,
-            "p(90)": 0.1869498,
-            "p(95)": 0.2514581999999998
+            "min": 0.017791,
+            "med": 0.047,
+            "max": 1.611,
+            "p(90)": 0.18925,
+            "p(95)": 0.9244623999999986,
+            "avg": 0.15712597872340428
         },
-        "http_req_duration": {
-            "min": 0.464458,
-            "med": 7.22975,
-            "max": 297.232375,
-            "p(90)": 14.8774506,
-            "p(95)": 19.1740918,
-            "avg": 9.010243238148346,
+        "http_reqs": {
+            "count": 47,
+            "rate": 16.229471130465985
+        },
+        "data_received": {
+            "rate": 101520.86684740703,
+            "count": 294001
+        },
+        "iterations": {
+            "count": 10,
+            "rate": 3.453078963928933
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 47,
             "thresholds": {
-                "p(95)<500": false
-            }
+                "rate<0.01": false
+            },
+            "value": 0
         },
-        "http_req_duration{expected_response:true}": {
-            "med": 7.22975,
-            "max": 297.232375,
-            "p(90)": 14.8774506,
-            "p(95)": 19.1740918,
-            "avg": 9.010243238148346,
-            "min": 0.464458
-        },
-        "http_req_tls_handshaking": {
-            "p(90)": 0,
-            "p(95)": 0,
-            "avg": 0,
+        "http_req_connecting": {
+            "avg": 0.10248757446808511,
             "min": 0,
             "med": 0,
-            "max": 0
+            "max": 0.772084,
+            "p(90)": 0.37722520000000004,
+            "p(95)": 0.5058083
+        },
+        "checks": {
+            "passes": 45,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
         },
         "vus_max": {
             "value": 6,
             "min": 6,
             "max": 6
         },
-        "http_reqs": {
-            "count": 1793,
-            "rate": 14.300216412158385
-        },
-        "data_sent": {
-            "count": 169779,
-            "rate": 1354.0861362185378
-        },
-        "iterations": {
-            "count": 601,
-            "rate": 4.793324073456324
-        },
         "checkout_success": {
-            "passes": 6,
-            "fails": 0,
-            "thresholds": {
-                "rate>0.99": false
-            },
-            "value": 1
-        },
-        "iteration_duration": {
-            "avg": 1002.0457889950089,
-            "min": 13.019084,
-            "med": 1009.938458,
-            "max": 1093.206958,
-            "p(90)": 1018.251209,
-            "p(95)": 1023.666667
-        },
-        "vus": {
-            "value": 0,
-            "min": 0,
-            "max": 5
-        },
-        "http_req_connecting": {
-            "p(90)": 0,
-            "p(95)": 0,
-            "avg": 0.0035300948131622985,
-            "min": 0,
-            "med": 0,
-            "max": 1.107209
-        },
-        "http_req_sending": {
-            "max": 4.058625,
-            "p(90)": 0.06937500000000003,
-            "p(95)": 0.12460899999999991,
-            "avg": 0.05315096876742876,
-            "min": 0.002292,
-            "med": 0.020833
-        },
-        "http_req_blocked": {
-            "p(95)": 0.11393359999999998,
-            "avg": 0.033036387618516384,
-            "min": 0.000792,
-            "med": 0.007334,
-            "max": 4.013375,
-            "p(90)": 0.040424600000000005
-        },
-        "checks": {
-            "passes": 1791,
-            "fails": 0,
-            "thresholds": {
-                "rate>0.99": false
-            },
-            "value": 1
-        },
-        "http_req_failed": {
             "passes": 0,
-            "fails": 1793,
+            "fails": 0,
             "thresholds": {
-                "rate<0.01": false
+                "rate>0.99": false
             },
             "value": 0
         },
-        "data_received": {
-            "count": 11547883,
-            "rate": 92101.07417863068
+        "http_req_duration": {
+            "min": 0.452625,
+            "med": 3.41975,
+            "max": 245.477917,
+            "p(90)": 5.4348916,
+            "p(95)": 6.5665081999999995,
+            "avg": 8.340201276595744,
+            "thresholds": {
+                "p(95)<500": false
+            }
         },
-        "http_req_waiting": {
-            "avg": 8.84645104517568,
-            "min": 0.4335,
-            "med": 7.033584,
-            "max": 296.947,
-            "p(90)": 14.599583400000002,
-            "p(95)": 19.029875399999995
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_sending": {
+            "avg": 0.2552615744680851,
+            "min": 0.003,
+            "med": 0.022458,
+            "max": 3.121542,
+            "p(90)": 0.18956700000000012,
+            "p(95)": 2.4176542999999966
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 5.4348916,
+            "p(95)": 6.5665081999999995,
+            "avg": 8.340201276595744,
+            "min": 0.452625,
+            "med": 3.41975,
+            "max": 245.477917
+        },
+        "data_sent": {
+            "count": 4459,
+            "rate": 1539.7279100159114
+        },
+        "vus": {
+            "value": 5,
+            "min": 5,
+            "max": 5
         }
     },
     "setup_data": {
         "product": {
-            "category": {
-                "id": "ae1a91ab-1333-46a2-8535-3bb68aaf3a9a",
-                "name": "Books",
-                "slug": "books"
-            },
-            "categoryId": "ae1a91ab-1333-46a2-8535-3bb68aaf3a9a",
-            "comparePrice": 1259,
-            "id": "975cd778-039b-4fc7-9af6-26c22d77418c",
-            "images": [],
-            "name": "Chaos Engineering Essentials",
-            "slug": "chaos-engineering-essentials",
-            "createdAt": "2026-10-10T07:32:21.248Z",
             "description": "A concise guide to resilience hypotheses, safe experiments, and recovery analysis.",
             "featured": false,
+            "images": [],
+            "slug": "chaos-engineering-essentials",
+            "updatedAt": "2026-10-10T11:46:36.403Z",
+            "category": {
+                    "name": "Books",
+                    "slug": "books",
+                    "id": "ae1a91ab-1333-46a2-8535-3bb68aaf3a9a"
+                },
+            "comparePrice": 1259,
+            "createdAt": "2026-10-10T07:32:21.248Z",
             "price": 1049,
             "stock": 21,
-            "updatedAt": "2026-10-10T09:20:18.495Z"
+            "categoryId": "ae1a91ab-1333-46a2-8535-3bb68aaf3a9a",
+            "id": "975cd778-039b-4fc7-9af6-26c22d77418c",
+            "name": "Chaos Engineering Essentials"
         },
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlmYzJiMmQ4LWE3NDMtNDgxNy04ODljLTc2MTQ0MDYyNDgzNSIsImVtYWlsIjoiYWRtaW5AdGVzdC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTE2MjQwNjYsImV4cCI6MTc5MTYyNDk2Nn0.WquZKyUBwiEyvh8s0vVJQp5X3n8PNpiqUipFduCXUP8"
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlmYzJiMmQ4LWE3NDMtNDgxNy04ODljLTc2MTQ0MDYyNDgzNSIsImVtYWlsIjoiYWRtaW5AdGVzdC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTE2MzMwMjcsImV4cCI6MTc5MTYzMzkyN30.uiFMKoXbkDfT4pEJ8jguPvEsquu4rdT4A0raVhN12CM"
     }
 }

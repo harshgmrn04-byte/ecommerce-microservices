@@ -1,0 +1,57 @@
+name: Hackathon live acceptance
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'chaos/**'
+      - 'safety/**'
+      - 'observability/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/hackathon-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sandbox-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit and safety regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Start disposable application and monitoring
+        run: docker compose up -d --build --wait --wait-timeout 240
+      - name: Discover service dependencies and event flows
+        run: python -m chaos.map_application
+      - name: Capture real steady-load baseline
+        run: python -m observability.capture_baseline
+      - name: Run seven live pause safety cases
+        run: python -m chaos.acceptance
+      - name: Generate scored analysis and submission dashboard
+        run: python -m chaos.report
+      - name: Collect final sandbox state
+        if: always()
+        run: |
+          mkdir -p chaos/results
+          docker compose ps -a > chaos/results/hackathon-containers.txt
+          docker compose logs --no-color > chaos/results/hackathon-sandbox.log
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hackathon-resilience-evidence
+          path: |
+            chaos/results/
+            observability/baseline.json
+            observability/results/
+            safety/config/dependency-map.json
+            docs/application-map.md
+            docs/resilience-report.md
+      - name: Remove disposable Actions sandbox
+        if: always()
+        run: docker compose down --volumes

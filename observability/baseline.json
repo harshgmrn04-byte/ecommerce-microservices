@@ -1,19 +1,25 @@
 {
-  "capturedAt": "2026-10-10T14:53:35+05:30",
+  "capturedAt": "2026-10-10T11:50:18.949102+00:00",
   "environment": "local-docker-compose-sandbox",
   "status": "passed",
   "workload": {
-    "duration": "2m",
+    "duration": "3m",
     "browseVirtualUsers": 5,
     "checkoutsPerMinute": 3,
-    "iterations": 601,
-    "httpRequests": 1793,
-    "requestRatePerSecond": 14.300216412158385
+    "iterations": 900,
+    "httpRequests": 2682,
+    "requestRatePerSecond": 14.434505983380966,
+    "serviceRequestCounts": {
+      "product-service": 4912,
+      "auth-service": 2,
+      "order-service": 25
+    },
+    "countMethod": "Prometheus increase over capture interval; includes concurrent local probes"
   },
   "availability": {
     "applicationTargetsUp": 4,
     "applicationTargetsExpected": 4,
-    "checksPassed": 1791,
+    "checksPassed": 2680,
     "checksFailed": 0,
     "checkSuccessRate": 1,
     "containerRestarts": {
@@ -28,49 +34,32 @@
     "failedRequests": 0,
     "failureRate": 0,
     "latencyMilliseconds": {
-      "average": 9.010243238148346,
-      "median": 7.22975,
-      "p90": 14.8774506,
-      "p95": 19.1740918,
-      "maximum": 297.232375
+      "average": 9.086766060402685,
+      "median": 4.4170625,
+      "p90": 17.467153600000003,
+      "p95": 30.916863149999998,
+      "maximum": 690.1575
     },
     "serviceP95Milliseconds": {
-      "auth-service": 38.68075928895712,
-      "product-service": 18.9047969886403,
-      "order-service": 32.81772510917082
+      "product-service": 20.92293746507883,
+      "auth-service": 490.5674291972764,
+      "order-service": 52.415707776639394
     }
   },
   "businessFlow": {
-    "checkoutAttempts": 6,
-    "checkoutSuccesses": 6,
+    "checkoutAttempts": 10,
+    "checkoutSuccesses": 10,
     "checkoutSuccessRate": 1,
-    "notificationsProcessed": 6,
-    "notificationProcessingP95Milliseconds": 97.5,
-    "mailhogMessagesDuringBaseline": 6
+    "mailhogMessagesDuringBaseline": 26
   },
   "rabbitmq": {
     "consumers": 1,
     "messagesReadyAtEnd": 0,
     "maximumMessagesReady": 0
   },
-  "processResidentMemoryBytes": {
-    "auth-service": 86532096,
-    "product-service": 108593152,
-    "order-service": 93126656,
-    "notification-service": 81162240
-  },
   "alerts": {
-    "firingAtEnd": 0,
-    "rulesHealthy": true
+    "firingAtEnd": 0
   },
-  "recommendedSafetyThresholds": {
-    "httpErrorRateAbort": 0.05,
-    "httpP95LatencyAbortMilliseconds": 100,
-    "serviceUnavailableForSeconds": 15,
-    "rabbitmqReadyMessagesAbort": 50,
-    "maximumConcurrentFaultTargets": 1,
-    "maximumExperimentDurationSeconds": 20,
-    "recoveryDeadlineSeconds": 30
-  },
-  "rawK6Summary": "observability/results/k6-summary.json"
+  "rawK6Summary": "observability/results/k6-summary.json",
+  "rawObservations": "observability/results/baseline-observations.json"
 }

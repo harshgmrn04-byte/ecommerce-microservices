@@ -3,12 +3,37 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from safety.configuration import ROOT, load_policy, validate_policy
 from safety.controller import ControllerError, load_baseline
+
+
+def learn_impact(history: list[dict[str, Any]], profile: str, version: str) -> dict[str, Any]:
+    """Beta-Bernoulli learner: update only from observed, real experiment outcomes."""
+    failures = successes = 0
+    for result in history:
+        if (result.get("profile") != profile or result.get("policyVersion") != version
+                or result.get("runKind", "experiment") != "experiment"
+                or not result.get("samples")):
+            continue
+        if result.get("reasonCode") in {"ERROR_RATE", "LATENCY", "CRITICAL_PROBE_FAILED", "RECOVERY_TIMEOUT"}:
+            failures += 1
+        elif (result.get("state") == "COMPLETED" and result.get("cleanupStatus") == "verified"
+              and result.get("recoveryStatus") == "confirmed"):
+            successes += 1
+    alpha, beta = 1 + failures, 1 + successes
+    mean = alpha / (alpha + beta)
+    deviation = math.sqrt(alpha * beta / ((alpha + beta) ** 2 * (alpha + beta + 1)))
+    return {"model": "Beta-Bernoulli adverse-impact learner with Beta(1,1) prior",
+            "observedExperiments": successes + failures, "adverseOutcomes": failures,
+            "recoveredOutcomes": successes, "alpha": alpha, "beta": beta,
+            "posteriorMean": round(mean, 5), "posteriorStdDev": round(deviation, 5),
+            "explorationWeight": round(mean + 2 * deviation, 5),
+            "interpretation": "Planning estimate with limited evidence; not a calibrated production failure probability"}
 
 
 def upstream_services(graph: dict[str, list[str]], target: str) -> list[str]:
@@ -37,12 +62,14 @@ def build_plan(policy: dict[str, Any], graph: dict[str, list[str]],
         # Dependency count is a transparent proxy, not a measured failure probability.
         fragility = 1 + len(dependencies) / 4
         cost = (1 + len(callers)) * profile["durationSeconds"] / 10
-        risk = round(criticality * fragility / cost, 4)
+        learning = learn_impact(history, name, policy["policyVersion"])
+        risk = round(criticality * fragility * learning["explorationWeight"] / cost, 4)
         smaller = [other_name for other_name, other in policy["profiles"].items()
                    if other["target"] == target and other["faultType"] == profile["faultType"]
                    and other["durationSeconds"] < profile["durationSeconds"]]
         latest = {profile_name: next((item for item in reversed(history)
                                       if item.get("profile") == profile_name
+                                      and item.get("runKind", "experiment") == "experiment"
                                       and item.get("policyVersion") == policy["policyVersion"]), None)
                   for profile_name in [name, *smaller]}
         def succeeded(result):
@@ -60,6 +87,7 @@ def build_plan(policy: dict[str, Any], graph: dict[str, list[str]],
             "profile": name, "target": target, "faultType": profile["faultType"],
             "durationSeconds": profile["durationSeconds"], "score": risk,
             "scoreComponents": {"criticality": criticality, "fragilityProxy": fragility, "cost": cost},
+            "learning": learning,
             "upstreamServices": callers, "dependencies": dependencies,
             "eligible": not blockers, "blockers": blockers,
             "hypothesis": (
@@ -75,13 +103,14 @@ def build_plan(policy: dict[str, Any], graph: dict[str, list[str]],
     return {
         "schemaVersion": 1, "policyVersion": policy["policyVersion"],
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "strategy": "criticality * dependency-fragility proxy / blast-radius-duration cost",
+        "strategy": "criticality * dependency-fragility proxy * learned impact/uncertainty / blast-radius-duration cost",
         "executionMode": "proposal-only", "maximumConcurrentTargets": 1,
         "historyOrder": "oldest-to-newest; only current policy version counts",
         "experiments": candidates,
         "coverageLimits": ["Only existing policy profiles are candidates; no new faults or targets",
                            "Graph is a configured dependency map, not measured runtime propagation",
-                           "No live safety acceptance is implied by a plan"],
+                           "No live safety acceptance is implied by a plan",
+                           "Safety drills, manual cancellation, and controller crashes do not train the impact model"],
     }
 
 

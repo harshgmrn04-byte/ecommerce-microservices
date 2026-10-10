@@ -1,0 +1,698 @@
+{
+  "startedAtEpoch": 1791632816.2231932,
+  "containersBefore": {
+    "auth-service": {
+      "id": "f8f36d089d92b4255dca70857feda1e5815ebc30944c87be7953164f83007dd3",
+      "restartCount": 0
+    },
+    "cadvisor": {
+      "id": "8d40b65686ddcda312cea5d2bcfb91b36183e07623372f1880cc5f339fe5476b",
+      "restartCount": 0
+    },
+    "frontend": {
+      "id": "aacc9004ae5d458901713aad373120a6b65c8d6cbd3be121da28c245e47d4cfe",
+      "restartCount": 0
+    },
+    "grafana": {
+      "id": "37925fac367e9f2abff4d21bdc63b0875af8cee4ec40ef6d010d969e17f4424c",
+      "restartCount": 0
+    },
+    "mailhog": {
+      "id": "6cce7ee3bf9193eb4c5faca83ed276eedda0554f7d0e358b99b144a62754af5d",
+      "restartCount": 0
+    },
+    "mongodb": {
+      "id": "233c5796285dd6cd92ca3f88711d20002ec35bb73e689468c082c92bdb5e6af3",
+      "restartCount": 0
+    },
+    "notification-service": {
+      "id": "98791c2bda8bb7f2779da10c80634d7fbf7a477e28c8ea89dcc0b9e257534e9f",
+      "restartCount": 0
+    },
+    "order-service": {
+      "id": "96ce46c7165a338ef9b31dc0c33d776ea2c4ef286b70acf19a0ba2dd4aeea79a",
+      "restartCount": 0
+    },
+    "postgres": {
+      "id": "349da443aba0cf07d26dc9819dc9a28751497a8141e9f04d732eeba2c7a2c121",
+      "restartCount": 0
+    },
+    "product-service": {
+      "id": "a6580a300f72fbbb9f52ac9bcd75cf6ec017b7458d33e5f710da0f71122cddab",
+      "restartCount": 0
+    },
+    "prometheus": {
+      "id": "a5dd3b3e52bc43f2e56569faf3de51f4d48114cc363032394b91c58afca6402d",
+      "restartCount": 0
+    },
+    "rabbitmq": {
+      "id": "abef2e8e01d2b2e4a9d394e5c1cc37cf22ea0de8ea3830aa536bc87ae6640d82",
+      "restartCount": 0
+    },
+    "redis": {
+      "id": "da2f8ca781b40ee0ac905bf3c5bdee7634c8ea234f5510ab308b0cd8195c5252",
+      "restartCount": 0
+    }
+  },
+  "containersAfter": {
+    "auth-service": {
+      "id": "f8f36d089d92b4255dca70857feda1e5815ebc30944c87be7953164f83007dd3",
+      "restartCount": 0
+    },
+    "cadvisor": {
+      "id": "8d40b65686ddcda312cea5d2bcfb91b36183e07623372f1880cc5f339fe5476b",
+      "restartCount": 0
+    },
+    "frontend": {
+      "id": "aacc9004ae5d458901713aad373120a6b65c8d6cbd3be121da28c245e47d4cfe",
+      "restartCount": 0
+    },
+    "grafana": {
+      "id": "37925fac367e9f2abff4d21bdc63b0875af8cee4ec40ef6d010d969e17f4424c",
+      "restartCount": 0
+    },
+    "mailhog": {
+      "id": "6cce7ee3bf9193eb4c5faca83ed276eedda0554f7d0e358b99b144a62754af5d",
+      "restartCount": 0
+    },
+    "mongodb": {
+      "id": "233c5796285dd6cd92ca3f88711d20002ec35bb73e689468c082c92bdb5e6af3",
+      "restartCount": 0
+    },
+    "notification-service": {
+      "id": "98791c2bda8bb7f2779da10c80634d7fbf7a477e28c8ea89dcc0b9e257534e9f",
+      "restartCount": 0
+    },
+    "order-service": {
+      "id": "96ce46c7165a338ef9b31dc0c33d776ea2c4ef286b70acf19a0ba2dd4aeea79a",
+      "restartCount": 0
+    },
+    "postgres": {
+      "id": "349da443aba0cf07d26dc9819dc9a28751497a8141e9f04d732eeba2c7a2c121",
+      "restartCount": 0
+    },
+    "product-service": {
+      "id": "a6580a300f72fbbb9f52ac9bcd75cf6ec017b7458d33e5f710da0f71122cddab",
+      "restartCount": 0
+    },
+    "prometheus": {
+      "id": "a5dd3b3e52bc43f2e56569faf3de51f4d48114cc363032394b91c58afca6402d",
+      "restartCount": 0
+    },
+    "rabbitmq": {
+      "id": "abef2e8e01d2b2e4a9d394e5c1cc37cf22ea0de8ea3830aa536bc87ae6640d82",
+      "restartCount": 0
+    },
+    "redis": {
+      "id": "da2f8ca781b40ee0ac905bf3c5bdee7634c8ea234f5510ab308b0cd8195c5252",
+      "restartCount": 0
+    }
+  },
+  "samples": [
+    {
+      "observedAt": 1791632816.225873,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632821.274082,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632826.309042,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632831.340565,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632836.372483,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632841.393318,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632846.4170098,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632851.440626,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632856.472513,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632861.491549,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632866.516209,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632871.5354571,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632876.561397,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632881.574014,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632886.616915,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632891.6566389,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632896.6939461,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632901.729394,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632906.765205,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632911.798742,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632916.836492,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632921.860895,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632926.896014,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632931.929833,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632936.9513102,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632941.973471,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632947.005615,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632952.0313332,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632957.0553112,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632962.077847,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632967.0968661,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632972.1248949,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632977.1389802,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632982.1779451,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632987.195672,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632992.214099,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791632997.249898,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791633002.272594,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    },
+    {
+      "observedAt": 1791633007.30069,
+      "up": {
+        "auth-service": 1,
+        "product-service": 1,
+        "order-service": 1,
+        "notification-service": 1
+      },
+      "rabbitmq": {
+        "messagesReady": 0,
+        "messagesUnacknowledged": 0,
+        "consumers": 1
+      },
+      "alerts": []
+    }
+  ]
+}

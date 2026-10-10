@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import signal
@@ -63,6 +64,8 @@ class Actuator:
                 )
         remaining = self.journal.unfinished_faults()
         self.journal.set_reconciliation(not remaining)
+        if not remaining:
+            self.journal.finalize_orphans()
         return {"reconciled": results, "remaining": [item["id"] for item in remaining]}
 
     def validate_spec(self, spec: dict[str, Any]) -> None:
@@ -161,6 +164,10 @@ class Actuator:
                 raise JournalError("Fault activation was cancelled")
             if fault["state"] != "PREPARED":
                 raise JournalError(f"Fault cannot be applied from state {fault['state']}")
+            now = datetime.now(timezone.utc)
+            if now >= min(parse_utc(fault["lease_expires_utc"]), parse_utc(fault["maximum_expires_utc"])):
+                self.revoke_and_rollback(fault_id, ReasonCode.WATCHDOG_EXPIRED.value, latch=True)
+                raise JournalError("Prepared fault lease expired before activation")
 
             self.journal.update_fault(fault_id, state="APPLYING")
             fault = self.journal.fault(fault_id)
@@ -342,6 +349,8 @@ class Actuator:
                 except Exception as error:
                     errors.append({"faultId": fault["id"], "error": str(error)})
             self.journal.set_reconciliation(not errors and not self.journal.unfinished_faults())
+            if not errors:
+                self.journal.finalize_orphans()
             return {"reconciled": results, "errors": errors}
 
     def watchdog_loop(self) -> None:
@@ -360,7 +369,10 @@ class Actuator:
                     reason = ReasonCode.WATCHDOG_EXPIRED.value
                 if reason:
                     try:
-                        self.kill_all(reason)
+                        if reason == ReasonCode.MAX_DURATION.value:
+                            self.revoke_and_rollback(fault["id"], reason)
+                        else:
+                            self.kill_all(reason)
                     except Exception as error:
                         self.journal.add_event(
                             experiment_id=fault["experiment_id"],
@@ -419,6 +431,7 @@ class Actuator:
         if action == "reset":
             if request.get("healthVerified") is not True:
                 raise JournalError("Reset requires a verified healthy preflight")
+            self.journal.finalize_orphans()
             return {"generation": self.journal.reset_kill(), "killLatched": False}
         if action == "shutdown":
             if self.journal.unfinished_faults():
@@ -451,12 +464,15 @@ class ActuatorServer(socketserver.ThreadingUnixStreamServer):
         super().__init__(socket_path, RequestHandler)
 
 
-def serve() -> int:
+def serve(journal_path: Path = JOURNAL_PATH) -> int:
     policy = load_policy()
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
     STATE_DIR.mkdir(parents=True, exist_ok=True)
+    # Do not unlink a socket owned by another live watchdog.
+    process_lock = (RUNTIME_DIR / "actuator.lock").open("w")
+    fcntl.flock(process_lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     SOCKET_PATH.unlink(missing_ok=True)
-    journal = Journal(JOURNAL_PATH)
+    journal = Journal(journal_path)
     actuator = Actuator(policy, journal, DockerApi(timeout=5))
     actuator.docker.ping()
     actuator.startup_reconcile()
@@ -477,18 +493,22 @@ def serve() -> int:
     try:
         server.serve_forever(poll_interval=0.2)
     finally:
+        if journal.unfinished_faults():
+            actuator.kill_all(ReasonCode.CONTROLLER_CANCELLED.value)
         actuator.shutdown_event.set()
         server.server_close()
         SOCKET_PATH.unlink(missing_ok=True)
         PID_PATH.unlink(missing_ok=True)
+        process_lock.close()
     return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Local safety actuator and watchdog")
     parser.add_argument("--serve", action="store_true", required=True)
-    parser.parse_args()
-    return serve()
+    parser.add_argument("--journal", type=Path, default=JOURNAL_PATH)
+    args = parser.parse_args()
+    return serve(args.journal)
 
 
 if __name__ == "__main__":

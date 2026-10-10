@@ -156,6 +156,20 @@ class Journal:
             )
         return generation
 
+    def finalize_orphans(self) -> None:
+        """Close interrupted controllers only after every recorded fault is removed."""
+        with self.transaction() as db:
+            if db.execute("SELECT COUNT(*) FROM faults WHERE cleanup_verified=0").fetchone()[0]:
+                raise JournalError("Cannot close interrupted experiments with residual faults")
+            placeholders = ",".join("?" for _ in TERMINAL_STATES)
+            now = utc_now()
+            db.execute(
+                f"""UPDATE experiments SET state='ABORTED', outcome='aborted',
+                    cleanup_status='verified', recovery_status='not_confirmed',
+                    updated_at=?, finished_at=? WHERE state NOT IN ({placeholders})""",
+                (now, now, *TERMINAL_STATES),
+            )
+
     def begin_experiment(
         self, experiment_id: str, profile: str, target: str, policy_version: str
     ) -> int:

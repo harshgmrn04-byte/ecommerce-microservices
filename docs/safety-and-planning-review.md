@@ -1,85 +1,52 @@
 # Safety review and intelligent experiment planning
 
-Reviewed on 2026-10-10 against the supplied Bosch solution plan. The document
-provides requirements context; the existing Docker Compose stack is retained.
+Current status: **implemented and verified in the local Docker sandbox**.
+The full deliverable audit is in [resilience-report.md](resilience-report.md),
+and reproduction/operator commands are in [hackathon-submission.md](hackathon-submission.md).
 
-## Verdict: safety is partially implemented, acceptance remains pending
+The earlier review's blockers have been resolved:
 
-The latest repository is ahead of the old screenshot. `safety/actuator.py` and
-`safety/journal.py` implement independent lease expiry, absolute deadlines,
-persistent kill latching, generation revocation, rollback intent, restart
-reconciliation, and verified unpause with retries. Target identity is checked
-against Compose project/service/working-directory labels. Policy excludes
-infrastructure targets, permits one container, and caps duration at 60 seconds.
-`safety/policy.py` evaluates sustained error/latency limits, telemetry loss,
-staleness, traffic validity, and critical probes.
+- Fresh steady-load baseline capture includes measured per-service request
+  counts, current timestamps, real container identities and restart deltas.
+- Docker plain-text ping responses are accepted; the actuator runs on Docker
+  Desktop's macOS Unix socket as well as Linux.
+- Expired prepared leases cannot activate. An exclusive process lock prevents
+  a second watchdog from replacing the active socket.
+- Interrupted controller records are finalized after verified cleanup;
+  conservative restart reconciliation prevents stale faults from blocking later
+  admission. Graceful watchdog shutdown removes active faults.
+- Controller results retain preflight, fault and recovery snapshots, timing,
+  policy version and profile identity. External kill and normal deadline
+  removal are classified from actual actuator state.
+- All seven live acceptance cases verify actual pause/unpause, continued
+  checkout, buffered event delivery and sustained healthy protected traffic.
+  The suite tests normal duration, stricter latency threshold, manual kill,
+  controller SIGTERM/SIGKILL, lease expiry, and actuator SIGKILL/restart.
 
-However, safety cannot yet be marked complete:
+The threshold acceptance case intentionally lowers the p95 ceiling to 1 ms
+with a 3-second hold against real Prometheus metrics. This is a safety drill,
+not evidence of a normal production-limit violation. The raw controller
+result, case assertions and persistent journal are in `chaos/results/`.
 
-- The committed baseline lacks `workload.serviceRequestCounts`, so the current
-  controller refuses admission for product-service. Aggregate workload totals
-  cannot substitute for measured per-service counts.
-- Preflight and recovery previously checked probes and target health without
-  checking metric freshness, completeness, error rate, latency, or traffic.
-  This change adds those checks and rejects nonfinite/future baseline values.
-- Missing required telemetry/probes could bypass monitoring-loss detection;
-  the evaluator now treats these as unknown monitoring.
-- No live acceptance results are committed for the new pause actuator. The old
-  `chaos/results/notification-service-crash.json` exercises a different stop
-  runner and cannot establish pause-watchdog/crash safety.
+The planner combines configured graph criticality, dependency count and duration
+cost with a Beta-Bernoulli learner of observed adverse outcomes. Its prior and
+uncertainty are explicit; one successful scenario is limited evidence. Only
+real experiment results train the learner. Drill results, manual cancellation
+and controller failures do not distort the model. Plans are proposals, and a
+longer profile requires a shorter successful run under the current policy.
 
-The historical baseline is preserved rather than backfilled with invented data.
-No Docker executable was available during this review; tests use controlled
-telemetry and do not establish live Docker rollback or business-flow recovery.
+The map is now generated from Compose dependencies and source event contracts,
+with optional manual corrections. Live business-flow checks separately verify
+the order-to-notification path; this is not distributed tracing.
 
-## Planning preview
+Coverage remains deliberate: notification-service container pause/stop only.
+The example network, disk, database and spike faults are not mandatory in the
+supplied brief and are not represented as verified. The scenario score is not
+an overall production resilience certification. Ranked weaknesses and fixes,
+including code-review risks not yet fault-tested, are clearly identified in
+the final report.
 
-Run from the repository root with Python 3.10 or later:
-
-```bash
-python -m chaos.planner
-python -m chaos.planner --history history.json --output plan.json
-python -m unittest discover -s tests -v
-```
-
-The planner implements the solution plan's deterministic option A. It emits
-JSON proposals with policy version, baseline admission status, ranked approved
-profiles, hypotheses, dependencies/upstream reachability, score components,
-abort thresholds, and escalation blockers. It never injects faults or changes
-policy. A candidate's `eligible` field describes history prerequisites only;
-baseline admission and controller live preflight are separate mandatory gates.
-
-Score = criticality * fragilityProxy / cost. Criticality uses upstream
-reachability and checkout roles, dependency count is an explicit fragility proxy,
-and cost uses upstream exposure and duration. These are explainable heuristics,
-not probabilities. The configured graph is not runtime propagation evidence.
-There is no LLM dependency or authority to execute proposed faults.
-
-Only the existing notification-pause profiles are proposed. The 12-second
-acceptance profile comes first; the 20-second profile requires the latest shorter
-run under the current policy version to have `state=COMPLETED`,
-`cleanupStatus=verified`, and `recoveryStatus=confirmed`. Latest failed/aborted
-runs block retry and escalation. History is a JSON array of controller results,
-oldest first; controller results now include `profile`. Old container-stop
-results and older policy versions cannot unlock escalation.
-
-## Required sandbox acceptance
-
-1. Refresh the baseline under steady load with measured per-service counts,
-   current capture time, per-service p95, and actual restart evidence. Product
-   needs at least 100 requests in the artifact and in each live 60-second window.
-   Keep browse load running during recovery.
-2. On Linux/WSL with Docker's Unix socket, start
-   `python -m safety.actuator --serve`. The Unix-socket actuator is not intended
-   to run directly on this Windows host.
-3. Exercise `SafetyController.run("notification-pause-acceptance")` against the
-   live monitoring adapter and actuator client. Deliberately breach a threshold,
-   invoke manual kill, interrupt the controller, expire a lease, and restart the
-   actuator with unfinished journal state. Verify actual unpause and sustained
-   healthy protected metrics/probes.
-4. Retain journal and controller results before declaring safety complete or
-   expanding the approved experiment catalog.
-
-Queue draining, checkout correctness, measured propagation, and broader fault
-types remain outside this preview's verified coverage. The legacy stop runner's
-file kill switch is separate from the newer actuator's journaled kill latch.
+Run `python3 -m unittest discover -s tests -v` for regression checks. Live
+acceptance uses `python3 -m chaos.acceptance`; unit tests alone are not proof of
+Docker recovery. The legacy stop runner and file kill switch remain separate
+from the newer pause watchdog and journaled latch.

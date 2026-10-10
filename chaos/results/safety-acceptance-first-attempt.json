@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-10T10:48:20.654075+00:00",
+  "environment": "local-docker-compose-sandbox",
+  "policyVersion": "2026-10-10.1",
+  "status": "failed",
+  "cases": [
+    {
+      "name": "completed",
+      "status": "passed",
+      "observations": [
+        {
+          "elapsedSeconds": 2.953,
+          "queue": {
+            "messagesReady": 0,
+            "messagesUnacknowledged": 1,
+            "consumers": 1
+          },
+          "monitoring": {
+            "observedAt": 1791629309.5615308,
+            "targetUp": {
+              "auth-service": {
+                "service": "auth-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629304.916521,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629304.916521
+              },
+              "product-service": {
+                "service": "product-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629308.164335,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629308.164335
+              },
+              "order-service": {
+                "service": "order-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629304.684107,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629304.684107
+              },
+              "notification-service": {
+                "service": "notification-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629305.854757,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629305.854757
+              }
+            },
+            "errorFraction": {
+              "product-service": {
+                "service": "product-service",
+                "value": 0.0,
+                "unit": "fraction",
+                "source_timestamp": 1791629308.164335,
+                "request_count": 354,
+                "validity": "healthy",
+                "last_successful_observation": 1791629308.164335
+              }
+            },
+            "p95LatencyMs": {
+              "product-service": {
+                "service": "product-service",
+                "value": 9.362244897959185,
+                "unit": "milliseconds",
+                "source_timestamp": 1791629308.164335,
+                "request_count": 354,
+                "validity": "healthy",
+                "last_successful_observation": 1791629308.164335
+              }
+            },
+            "probes": {
+              "frontend": {
+                "probe_id": "frontend",
+                "status_code": 200,
+                "latency_ms": 20.248707998689497,
+                "valid": true,
+                "observed_at": 1791629309.5047638,
+                "error": null
+              },
+              "auth-service": {
+                "probe_id": "auth-service",
+                "status_code": 200,
+                "latency_ms": 13.731792001635768,
+                "valid": true,
+                "observed_at": 1791629309.5250509,
+                "error": null
+              },
+              "product-service": {
+                "probe_id": "product-service",
+                "status_code": 200,
+                "latency_ms": 2.828584001690615,
+                "valid": true,
+                "observed_at": 1791629309.53879,
+                "error": null
+              },
+              "order-service": {
+                "probe_id": "order-service",
+                "status_code": 200,
+                "latency_ms": 8.020082997973077,
+                "valid": true,
+                "observed_at": 1791629309.541623,
+                "error": null
+              }
+            },
+            "telemetryError": null,
+            "unexpectedContainerEvent": null
+          }
+        }
+      ],
+      "assertions": {
+        "faultPresentInDocker": true,
+        "checkoutAvailableDuringFault": true,
+        "eventBufferedDuringFault": true,
+        "expectedTerminationReason": true,
+        "controllerConfirmedRecovery": true,
+        "targetUnpausedAfterRollback": true,
+        "canaryEmailDelivered": true,
+        "queueDrained": true,
+        "noResidualFaults": true
+      },
+      "canaryOrder": {
+        "httpStatus": 201,
+        "orderId": "8b7e3d59-3d58-4af5-9c3a-7d8005f1d199"
+      },
+      "controllerExitCode": 0,
+      "controllerResult": "chaos/results/pause-completed.json",
+      "totalSeconds": 22.972
+    },
+    {
+      "name": "latency-threshold",
+      "status": "passed",
+      "observations": [
+        {
+          "elapsedSeconds": 4.824,
+          "queue": {
+            "messagesReady": 0,
+            "messagesUnacknowledged": 1,
+            "consumers": 1
+          },
+          "monitoring": {
+            "observedAt": 1791629339.6101272,
+            "targetUp": {
+              "auth-service": {
+                "service": "auth-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629334.918261,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629334.918261
+              },
+              "product-service": {
+                "service": "product-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629338.168493,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629338.168493
+              },
+              "order-service": {
+                "service": "order-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629334.687097,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629334.687097
+              },
+              "notification-service": {
+                "service": "notification-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629330.858251,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629330.858251
+              }
+            },
+            "errorFraction": {
+              "product-service": {
+                "service": "product-service",
+                "value": 0.0,
+                "unit": "fraction",
+                "source_timestamp": 1791629338.168493,
+                "request_count": 472,
+                "validity": "healthy",
+                "last_successful_observation": 1791629338.168493
+              }
+            },
+            "p95LatencyMs": {
+              "product-service": {
+                "service": "product-service",
+                "value": 4.89702380952381,
+                "unit": "milliseconds",
+                "source_timestamp": 1791629338.168493,
+                "request_count": 472,
+                "validity": "healthy",
+                "last_successful_observation": 1791629338.168493
+              }
+            },
+            "probes": {
+              "frontend": {
+                "probe_id": "frontend",
+                "status_code": 200,
+                "latency_ms": 18.31550000133575,
+                "valid": true,
+                "observed_at": 1791629339.5619981,
+                "error": null
+              },
+              "auth-service": {
+                "probe_id": "auth-service",
+                "status_code": 200,
+                "latency_ms": 9.193666999635752,
+                "valid": true,
+                "observed_at": 1791629339.580339,
+                "error": null
+              },
+              "product-service": {
+                "probe_id": "product-service",
+                "status_code": 200,
+                "latency_ms": 2.33887500144192,
+                "valid": true,
+                "observed_at": 1791629339.589539,
+                "error": null
+              },
+              "order-service": {
+                "probe_id": "order-service",
+                "status_code": 200,
+                "latency_ms": 7.522584000980714,
+                "valid": true,
+                "observed_at": 1791629339.5918841,
+                "error": null
+              }
+            },
+            "telemetryError": null,
+            "unexpectedContainerEvent": null
+          }
+        }
+      ],
+      "assertions": {
+        "faultPresentInDocker": true,
+        "checkoutAvailableDuringFault": true,
+        "eventBufferedDuringFault": true,
+        "expectedTerminationReason": true,
+        "controllerConfirmedRecovery": true,
+        "targetUnpausedAfterRollback": true,
+        "canaryEmailDelivered": true,
+        "queueDrained": true,
+        "noResidualFaults": true
+      },
+      "stricterThresholdOverride": {
+        "p95Milliseconds": 1,
+        "holdSeconds": 3
+      },
+      "canaryOrder": {
+        "httpStatus": 201,
+        "orderId": "89695745-10fe-4f35-a15f-1d26b492a0f6"
+      },
+      "controllerExitCode": 2,
+      "controllerResult": "chaos/results/pause-latency-threshold.json",
+      "totalSeconds": 15.937
+    },
+    {
+      "name": "manual-kill",
+      "status": "passed",
+      "observations": [
+        {
+          "elapsedSeconds": 3.486,
+          "queue": {
+            "messagesReady": 0,
+            "messagesUnacknowledged": 1,
+            "consumers": 1
+          },
+          "monitoring": {
+            "observedAt": 1791629359.4259148,
+            "targetUp": {
+              "auth-service": {
+                "service": "auth-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629354.916899,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629354.916899
+              },
+              "product-service": {
+                "service": "product-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629358.167933,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629358.167933
+              },
+              "order-service": {
+                "service": "order-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629354.686188,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629354.686188
+              },
+              "notification-service": {
+                "service": "notification-service",
+                "value": 1.0,
+                "unit": "boolean",
+                "source_timestamp": 1791629355.857466,
+                "request_count": null,
+                "validity": "healthy",
+                "last_successful_observation": 1791629355.857466
+              }
+            },
+            "errorFraction": {
+              "product-service": {
+                "service": "product-service",
+                "value": 0.0,
+                "unit": "fraction",
+                "source_timestamp": 1791629358.167933,
+                "request_count": 693,
+                "validity": "healthy",
+                "last_successful_observation": 1791629358.167933
+              }
+            },
+            "p95LatencyMs": {
+              "product-service": {
+                "service": "product-service",
+                "value": 4.849117174959871,
+                "unit": "milliseconds",
+                "source_timestamp": 1791629358.167933,
+                "request_count": 693,
+                "validity": "healthy",
+                "last_successful_observation": 1791629358.167933
+              }
+            },
+            "probes": {
+              "frontend": {
+                "probe_id": "frontend",
+                "status_code": 200,
+                "latency_ms": 6.157542000437388,
+                "valid": true,
+                "observed_at": 1791629359.398428,
+                "error": null
+              },
+              "auth-service": {
+                "probe_id": "auth-service",
+                "status_code": 200,
+                "latency_ms": 3.974916999140987,
+                "valid": true,
+                "observed_at": 1791629359.4045959,
+                "error": null
+              },
+              "product-service": {
+                "probe_id": "product-service",
+                "status_code": 200,
+                "latency_ms": 2.218583002104424,
+                "valid": true,
+                "observed_at": 1791629359.408577,
+                "error": null
+              },
+              "order-service": {
+                "probe_id": "order-service",
+                "status_code": 200,
+                "latency_ms": 7.129707999411039,
+                "valid": true,
+                "observed_at": 1791629359.410799,
+                "error": null
+              }
+            },
+            "telemetryError": null,
+            "unexpectedContainerEvent": null
+          }
+        }
+      ],
+      "assertions": {
+        "faultPresentInDocker": true,
+        "checkoutAvailableDuringFault": true,
+        "eventBufferedDuringFault": true,
+        "expectedTerminationReason": true,
+        "controllerConfirmedRecovery": true,
+        "targetUnpausedAfterRollback": true,
+        "canaryEmailDelivered": true,
+        "queueDrained": true,
+        "noResidualFaults": true
+      },
+      "canaryOrder": {
+        "httpStatus": 201,
+        "orderId": "a059bfcc-ecc2-40fc-bb1b-f244b87a7990"
+      },
+      "operatorAction": {
+        "killLatched": true,
+        "reason": "MANUAL_KILL",
+        "rolledBack": [
+          {
+            "faultId": "116afb20-fb04-479a-ab5a-085bd98a8ff2",
+            "state": "ROLLED_BACK",
+            "desiredCancel": true,
+            "cleanupVerified": true,
+            "target": "notification-service",
+            "evidence": {
+              "containerExists": true,
+              "running": true,
+              "paused": false,
+              "containerId": "c7d7e59a0d0dbb61677e784d531ebc4ed7c9a3da83aa4fb05c8923e9f41c2fde"
+            }
+          }
+        ],
+        "errors": []
+      },
+      "controllerExitCode": 2,
+      "controllerResult": "chaos/results/pause-manual-kill.json",
+      "totalSeconds": 16.068
+    },
+    {
+      "name": "controller-sigterm",
+      "status": "running",
+      "observations": [],
+      "assertions": {
+        "faultPresentInDocker": true
+      },
+      "canaryOrder": {
+        "httpStatus": 201,
+        "orderId": "e2da1c7c-56b1-4d94-8863-33de2bc0574e"
+      }
+    }
+  ],
+  "error": "Timed out waiting for buffered canary event: False",
+  "finishedAt": "2026-10-10T10:49:53.357241+00:00"
+}

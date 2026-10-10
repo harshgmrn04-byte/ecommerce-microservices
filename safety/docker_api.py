@@ -47,7 +47,8 @@ class DockerApi:
             connection.request(method, path, headers={"Content-Type": "application/json"})
             response = connection.getresponse()
             body = response.read().decode("utf-8")
-            parsed = json.loads(body) if body else None
+            parsed = (json.loads(body) if response.getheader("Content-Type", "").startswith("application/json")
+                      else body) if body else None
             return response.status, parsed
         except (OSError, http.client.HTTPException, json.JSONDecodeError) as error:
             raise DockerApiError(f"Docker API request failed: {method} {path}: {error}") from error

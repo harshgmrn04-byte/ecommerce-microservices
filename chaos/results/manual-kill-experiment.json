@@ -17,13 +17,13 @@
     },
     "expectedSafetyAction": "abort_experiment"
   },
-  "startedAt": "2026-10-10T10:33:17+00:00",
+  "startedAt": "2026-10-10T16:31:03+05:30",
   "environment": "local-docker-compose-sandbox",
   "dryRun": false,
   "status": "passed",
   "samples": [
     {
-      "elapsedSeconds": 0.159,
+      "elapsedSeconds": 0.145,
       "syntheticProbeStatus": {
         "auth-service": 200,
         "product-service": 200,
@@ -47,7 +47,7 @@
       "firingSafetyAlerts": []
     },
     {
-      "elapsedSeconds": 2.188,
+      "elapsedSeconds": 2.198,
       "syntheticProbeStatus": {
         "auth-service": 200,
         "product-service": 200,
@@ -71,7 +71,7 @@
       "firingSafetyAlerts": []
     },
     {
-      "elapsedSeconds": 4.208,
+      "elapsedSeconds": 4.255,
       "syntheticProbeStatus": {
         "auth-service": 200,
         "product-service": 200,
@@ -107,12 +107,12 @@
       "messagesUnacknowledged": 0,
       "consumers": 1
     },
-    "mailhogMessages": 0
+    "mailhogMessages": 44
   },
-  "injectedAt": "2026-10-10T10:33:18+00:00",
+  "injectedAt": "2026-10-10T16:31:05+05:30",
   "canaryOrder": {
     "httpStatus": 201,
-    "orderId": "1ca5ddd3-f9ff-45ed-adb8-791d3b024e6a"
+    "orderId": "944fe661-64d8-4017-9462-38a77ee58b6a"
   },
   "termination": "kill_switch",
   "terminationReason": "Manual kill switch engaged",
@@ -128,10 +128,10 @@
       "messagesUnacknowledged": 0,
       "consumers": 1
     },
-    "mailhogMessages": 1,
+    "mailhogMessages": 45,
     "firingSafetyAlerts": []
   },
-  "recoverySeconds": 6.717,
+  "recoverySeconds": 9.0,
   "assertions": {
     "faultObservedByPrometheus": true,
     "checkoutAvailableDuringFault": true,
@@ -139,6 +139,6 @@
     "automaticRollbackExecuted": true,
     "recoveryWithinDeadline": true
   },
-  "finishedAt": "2026-10-10T10:33:31+00:00",
-  "totalSeconds": 14.274
+  "finishedAt": "2026-10-10T16:31:21+05:30",
+  "totalSeconds": 17.426
 }

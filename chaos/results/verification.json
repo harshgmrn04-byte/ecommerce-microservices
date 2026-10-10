@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-10T11:03:02.267693+00:00",
+  "pythonRegressionTests": {
+    "passed": 19,
+    "failed": 0
+  },
+  "typeScript": {
+    "auth-service": "passed",
+    "product-service": "passed",
+    "order-service": "passed",
+    "notification-service": "passed",
+    "frontend": "passed"
+  },
+  "livePauseSafety": {
+    "passed": 7,
+    "failed": 0,
+    "evidence": "chaos/results/safety-acceptance.json"
+  },
+  "legacyManualKill": {
+    "status": "passed",
+    "evidence": "chaos/results/manual-kill-acceptance.json"
+  },
+  "baseline": {
+    "httpRequests": 2687,
+    "httpFailures": 0,
+    "successfulCheckouts": 9
+  },
+  "finalSandbox": {
+    "allApplicationContainersHealthy": true,
+    "notificationPaused": false
+  },
+  "newActionsWorkflow": "added; local equivalent verified; remote workflow has not been run"
+}

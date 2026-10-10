@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "2026-10-10.1",
+  "generatedAt": "2026-10-10T11:40:17.385832+00:00",
+  "strategy": "criticality * dependency-fragility proxy * learned impact/uncertainty / blast-radius-duration cost",
+  "executionMode": "proposal-only",
+  "maximumConcurrentTargets": 1,
+  "historyOrder": "oldest-to-newest; only current policy version counts",
+  "experiments": [
+    {
+      "profile": "notification-pause-acceptance",
+      "target": "notification-service",
+      "faultType": "container-pause",
+      "durationSeconds": 12,
+      "score": 1.1736,
+      "scoreComponents": {
+        "criticality": 1,
+        "fragilityProxy": 1.75,
+        "cost": 1.2
+      },
+      "learning": {
+        "model": "Beta-Bernoulli adverse-impact learner with Beta(1,1) prior",
+        "observedExperiments": 1,
+        "adverseOutcomes": 0,
+        "recoveredOutcomes": 1,
+        "alpha": 1,
+        "beta": 2,
+        "posteriorMean": 0.33333,
+        "posteriorStdDev": 0.2357,
+        "explorationWeight": 0.80474,
+        "interpretation": "Planning estimate with limited evidence; not a calibrated production failure probability"
+      },
+      "upstreamServices": [],
+      "dependencies": [
+        "mailhog",
+        "mongodb",
+        "rabbitmq"
+      ],
+      "eligible": true,
+      "blockers": [],
+      "hypothesis": "Pausing notification-service for 12 seconds affects only that container. Critical probes stay healthy and protected HTTP services (product-service) remain below 5% errors and the policy's baseline-relative/absolute p95 limit. Cleanup is verified and health is sustained for the configured recovery hold.",
+      "abortThresholds": {
+        "maximumErrorFraction": 0.05,
+        "relativeP95Multiplier": 3,
+        "relativeP95FloorMilliseconds": 1000,
+        "absoluteP95Milliseconds": 2000,
+        "sustainedBreachSeconds": 15,
+        "telemetryUnavailableSeconds": 10,
+        "maximumSourceAgeSeconds": 15,
+        "telemetryStaleSeconds": 10,
+        "insufficientTrafficSeconds": 15,
+        "criticalProbeConsecutiveFailures": 3
+      }
+    },
+    {
+      "profile": "notification-pause",
+      "target": "notification-service",
+      "faultType": "container-pause",
+      "durationSeconds": 20,
+      "score": 0.9427,
+      "scoreComponents": {
+        "criticality": 1,
+        "fragilityProxy": 1.75,
+        "cost": 2.0
+      },
+      "learning": {
+        "model": "Beta-Bernoulli adverse-impact learner with Beta(1,1) prior",
+        "observedExperiments": 0,
+        "adverseOutcomes": 0,
+        "recoveredOutcomes": 0,
+        "alpha": 1,
+        "beta": 1,
+        "posteriorMean": 0.5,
+        "posteriorStdDev": 0.28868,
+        "explorationWeight": 1.07735,
+        "interpretation": "Planning estimate with limited evidence; not a calibrated production failure probability"
+      },
+      "upstreamServices": [],
+      "dependencies": [
+        "mailhog",
+        "mongodb",
+        "rabbitmq"
+      ],
+      "eligible": true,
+      "blockers": [],
+      "hypothesis": "Pausing notification-service for 20 seconds affects only that container. Critical probes stay healthy and protected HTTP services (product-service) remain below 5% errors and the policy's baseline-relative/absolute p95 limit. Cleanup is verified and health is sustained for the configured recovery hold.",
+      "abortThresholds": {
+        "maximumErrorFraction": 0.05,
+        "relativeP95Multiplier": 3,
+        "relativeP95FloorMilliseconds": 1000,
+        "absoluteP95Milliseconds": 2000,
+        "sustainedBreachSeconds": 15,
+        "telemetryUnavailableSeconds": 10,
+        "maximumSourceAgeSeconds": 15,
+        "telemetryStaleSeconds": 10,
+        "insufficientTrafficSeconds": 15,
+        "criticalProbeConsecutiveFailures": 3
+      }
+    }
+  ],
+  "coverageLimits": [
+    "Only existing policy profiles are candidates; no new faults or targets",
+    "Graph is a configured dependency map, not measured runtime propagation",
+    "No live safety acceptance is implied by a plan",
+    "Safety drills, manual cancellation, and controller crashes do not train the impact model"
+  ],
+  "baselineAdmission": {
+    "status": "passed",
+    "reference": "observability/baseline.json",
+    "livePreflightRequired": true
+  }
+}

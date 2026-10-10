@@ -175,6 +175,9 @@ class SafetyController:
         abort_requested_at: float | None = None
         fault_removed_at: float | None = None
         first_healthy_at: float | None = None
+        samples: list[dict[str, Any]] = []
+        began = False
+        failure_terminal: Lifecycle | None = None
 
         previous_sigint = signal.getsignal(signal.SIGINT)
         previous_sigterm = signal.getsignal(signal.SIGTERM)
@@ -193,8 +196,10 @@ class SafetyController:
                 policyVersion=self.policy["policyVersion"],
             )
             generation = int(begin["generation"])
+            began = True
             snapshot = self.monitoring.snapshot()
             self._healthy_preflight(snapshot)
+            samples.append({"phase": "preflight", **snapshot.to_dict()})
             self._transition(
                 experiment_id,
                 Lifecycle.BASELINING,
@@ -241,16 +246,25 @@ class SafetyController:
                     reason = self.cancel_reason
                     abort_requested_at = self.clock()
                     break
-                if self.heartbeat_error:
-                    reason = ReasonCode.WATCHDOG_EXPIRED
-                    abort_requested_at = self.clock()
-                    break
                 inspection = self.actuator.call("inspect", faultId=fault_id)
                 if not inspection["evidence"].get("containerExists"):
                     reason = ReasonCode.UNEXPECTED_CONTAINER_EVENT
                     abort_requested_at = self.clock()
                     break
+                if inspection["cleanupVerified"]:
+                    system = self.actuator.call("status")["system"]
+                    kill_reason = system.get("kill_reason")
+                    reason = (ReasonCode(kill_reason) if kill_reason in ReasonCode._value2member_map_
+                              else ReasonCode.MAX_DURATION if not system["kill_latched"]
+                              else ReasonCode.MANUAL_KILL)
+                    abort_requested_at = self.clock()
+                    break
+                if self.heartbeat_error:
+                    reason = ReasonCode.WATCHDOG_EXPIRED
+                    abort_requested_at = self.clock()
+                    break
                 snapshot = self.monitoring.snapshot()
+                samples.append({"phase": "fault", **snapshot.to_dict()})
                 decision = evaluator.evaluate(
                     snapshot,
                     baseline,
@@ -279,6 +293,7 @@ class SafetyController:
             cleanup_verified = bool(rollback["cleanupVerified"] and not rollback["evidence"].get("paused"))
             fault_removed_at = self.clock()
             if not cleanup_verified:
+                failure_terminal = Lifecycle.CLEANUP_FAILED
                 self._transition(
                     experiment_id,
                     Lifecycle.CLEANUP_FAILED,
@@ -315,6 +330,7 @@ class SafetyController:
                 except Exception:
                     healthy = False
                 if healthy:
+                    samples.append({"phase": "recovery", **snapshot.to_dict()})
                     if healthy_since is None:
                         healthy_since = self.clock()
                         first_healthy_at = healthy_since
@@ -326,6 +342,7 @@ class SafetyController:
                 self.sleeper(1)
 
             if not recovery_confirmed:
+                failure_terminal = Lifecycle.RECOVERY_FAILED
                 self._transition(
                     experiment_id,
                     Lifecycle.RECOVERY_FAILED,
@@ -366,16 +383,19 @@ class SafetyController:
                 "baselineReference": baseline.reference,
                 "policyVersion": self.policy["policyVersion"],
                 "startedAtEpoch": started_wall,
+                "target": target,
+                "samples": samples,
             }
-        except Exception:
+        except Exception as error:
             self.heartbeat_stop.set()
             if fault_id and not cleanup_verified:
                 try:
-                    self.actuator.call(
+                    cleanup = self.actuator.call(
                         "revoke",
                         faultId=fault_id,
                         reason=(self.cancel_reason or ReasonCode.CONTROLLER_CANCELLED).value,
                     )
+                    cleanup_verified = bool(cleanup.get("cleanupVerified"))
                 except Exception:
                     try:
                         self.actuator.call(
@@ -384,6 +404,18 @@ class SafetyController:
                         )
                     except Exception:
                         pass
+            if began and failure_terminal is None:
+                try:
+                    self._transition(
+                        experiment_id, Lifecycle.ABORTED if not fault_id or cleanup_verified else Lifecycle.CLEANUP_FAILED,
+                        reason=self.cancel_reason or ReasonCode.CONTROLLER_CANCELLED,
+                        target=target, outcome="aborted",
+                        cleanupStatus="verified" if not fault_id or cleanup_verified else "failed",
+                        recoveryStatus="confirmed" if recovery_confirmed else "not_confirmed",
+                        details={"error": str(error)},
+                    )
+                except ActuatorClientError:
+                    pass
             raise
         finally:
             signal.signal(signal.SIGINT, previous_sigint)

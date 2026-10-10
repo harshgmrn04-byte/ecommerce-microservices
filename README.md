@@ -1,7 +1,10 @@
 # E-Commerce Microservices
 
-Chaos engineering: see the [safety review and experiment planner](docs/safety-and-planning-review.md)
-for the current milestone assessment, planning commands, and pending sandbox acceptance.
+Hackathon: see the [deliverable audit and resilience report](docs/resilience-report.md)
+and [submission/demo guide](docs/hackathon-submission.md). The local evidence
+dashboard runs at http://localhost:8070 with `python3 -m chaos.dashboard`.
+The adaptive planner, fresh baseline capture and seven live safety cases are
+reproducible with the commands in the guide.
 
 ![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-blue)
 ![Version](https://img.shields.io/badge/version-1.0.0-green)
@@ -202,10 +205,10 @@ erDiagram
 
 ```bash
 # 1. Clone and enter the project
-git clone https://github.com/andrelima28439/ecommerce-microservices.git
+git clone https://github.com/harshgmrn04-byte/ecommerce-microservices.git
 cd ecommerce-microservices
 
-# 2. Start everything (10 containers)
+# 2. Start the application and monitoring (13 containers)
 docker compose up --build -d
 
 # 3. The startup scripts automatically seed the local admin and product catalog.
@@ -214,6 +217,13 @@ docker compose up --build -d
 # 4. Access the platform
 open http://localhost:3000
 ```
+
+Each service has its own `.dockerignore` because Compose builds from the service
+directory. These exclusions keep host `node_modules`, generated output, and local
+environment files out of the Linux images. Copying Mac dependencies into a
+container can make native modules such as `bcrypt` fail with `Exec format error`.
+If authentication fails to start, inspect `docker compose logs auth-service`,
+then rebuild with `docker compose up -d --build --wait --wait-timeout 240`.
 
 ### Manual Start (without Docker)
 
@@ -413,8 +423,29 @@ docker compose --profile tools run --rm k6
 
 The recorded baseline, raw results, and derived safety thresholds are
 documented in [`docs/monitoring-baseline.md`](docs/monitoring-baseline.md).
+Use `python3 -m observability.capture_baseline` to refresh the admission artifact
+with measured service request counts, current health and restart deltas.
 
 ### Controlled failure injection
+
+The current pause controller has an independent watchdog, persistent kill latch,
+project identity checks, rollback journal and verified recovery. Reproduce the
+complete acceptance and report:
+
+```bash
+python3 -m chaos.map_application
+python3 -m observability.capture_baseline
+python3 -m chaos.acceptance
+python3 -m chaos.report
+python3 -m chaos.dashboard
+```
+
+The suite covers normal rollback, a stricter latency threshold, manual kill,
+controller termination/crash, lease expiry and actuator restart. The planner
+learns from real run history; only policy-approved profiles can be proposed.
+See the [submission guide](docs/hackathon-submission.md) for interactive operator
+commands. The legacy stop demo remains available below; its file kill switch is
+separate from the pause actuator's journaled latch. Run the two paths separately.
 
 The first sandbox experiment stops the notification consumer while checkout
 continues and RabbitMQ buffers the notification. A safety controller enforces

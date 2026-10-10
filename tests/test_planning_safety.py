@@ -4,6 +4,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from chaos.planner import build_plan, upstream_services
 from safety.configuration import ROOT, ConfigurationError, load_policy
@@ -127,8 +128,42 @@ class PlanningSafetyTests(unittest.TestCase):
                          ReasonCode.TELEMETRY_UNAVAILABLE)
 
     def test_recorded_baseline_missing_counts_blocks_admission(self):
-        with self.assertRaises(ControllerError):
-            load_baseline(self.policy)
+        artifact = json.loads((ROOT / "observability/baseline.json").read_text())
+        artifact["capturedAt"] = datetime.now(timezone.utc).isoformat()
+        artifact["workload"].pop("serviceRequestCounts", None)
+        with TemporaryDirectory(dir=ROOT) as directory:
+            path = Path(directory) / "baseline.json"
+            path.write_text(json.dumps(artifact))
+            policy = copy.deepcopy(self.policy)
+            policy["admission"]["baselineArtifact"] = str(path)
+            with self.assertRaises(ControllerError):
+                load_baseline(policy)
+
+    def test_cleanup_and_recovery_failures_keep_their_terminal_state(self):
+        for cleanup_ok, expected in [(False, "CLEANUP_FAILED"), (True, "RECOVERY_FAILED")]:
+            with self.subTest(expected=expected):
+                now = [0]
+                states = []
+                class Monitoring:
+                    def snapshot(inner):
+                        return self.snapshot
+                class Client:
+                    def call(inner, action, **payload):
+                        if action == "begin_experiment": return {"generation": 1}
+                        if action == "prepare": return {"faultId": "fixture", "containerId": "fixture"}
+                        if action == "transition": states.append(payload["state"])
+                        if action in {"inspect", "revoke"}:
+                            return {"cleanupVerified": cleanup_ok if action == "revoke" else False,
+                                    "evidence": {"containerExists": True, "paused": action != "revoke"}}
+                        return {}
+                policy = copy.deepcopy(self.policy)
+                policy["timing"]["recoveryTimeoutSeconds"] = 0
+                def sleep(seconds): now[0] += seconds
+                controller = SafetyController(policy, Monitoring(), Client(), lambda: now[0], sleep)
+                with patch("safety.controller.load_baseline", return_value=self.baseline):
+                    with self.assertRaises(ControllerError):
+                        controller.run("notification-pause-acceptance")
+                self.assertEqual(states[-1], expected)
 
     def test_baseline_rejects_nonfinite_and_future_values(self):
         artifact = json.loads((ROOT / "observability/baseline.json").read_text())

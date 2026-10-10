@@ -208,7 +208,7 @@ class PrometheusMonitoringAdapter:
             )
 
         return MonitoringSnapshot(
-            observed_at=observed_at,
+            observed_at=time.time(),
             target_up=target_up,
             error_fraction=error_values,
             p95_latency_ms=latency_values,

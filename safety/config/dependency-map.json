@@ -1,15 +1,92 @@
 {
   "schemaVersion": 1,
+  "generatedAt": "2026-10-10T11:36:09.053045+00:00",
+  "method": "docker compose config dependencies plus source-code event extraction",
   "services": {
-    "frontend": ["auth-service", "product-service", "order-service"],
-    "auth-service": ["postgres"],
-    "product-service": ["postgres", "mongodb", "redis"],
-    "order-service": ["postgres", "rabbitmq"],
-    "notification-service": ["rabbitmq", "mongodb", "mailhog"]
+    "auth-service": [
+      "postgres"
+    ],
+    "frontend": [
+      "auth-service",
+      "order-service",
+      "product-service"
+    ],
+    "notification-service": [
+      "mailhog",
+      "mongodb",
+      "rabbitmq"
+    ],
+    "order-service": [
+      "postgres",
+      "rabbitmq"
+    ],
+    "product-service": [
+      "mongodb",
+      "postgres",
+      "redis"
+    ]
   },
+  "dataFlows": [
+    {
+      "from": "order-service",
+      "via": "rabbitmq",
+      "to": "notification-service",
+      "event": "order.created",
+      "exchange": "orders",
+      "queue": "notifications",
+      "evidence": [
+        "order-service/src/controllers/orderController.ts",
+        "notification-service/src/consumers/orderConsumer.ts"
+      ]
+    },
+    {
+      "from": "order-service",
+      "via": "rabbitmq",
+      "to": "notification-service",
+      "event": "order.delivered",
+      "exchange": "orders",
+      "queue": "notifications",
+      "evidence": [
+        "order-service/src/controllers/orderController.ts",
+        "notification-service/src/consumers/orderConsumer.ts"
+      ]
+    },
+    {
+      "from": "order-service",
+      "via": "rabbitmq",
+      "to": "notification-service",
+      "event": "order.shipped",
+      "exchange": "orders",
+      "queue": "notifications",
+      "evidence": [
+        "order-service/src/controllers/orderController.ts",
+        "notification-service/src/consumers/orderConsumer.ts"
+      ]
+    },
+    {
+      "from": "order-service",
+      "via": "rabbitmq",
+      "to": "notification-service",
+      "event": "payment.confirmed",
+      "exchange": "orders",
+      "queue": "notifications",
+      "evidence": [
+        "order-service/src/controllers/orderController.ts",
+        "notification-service/src/consumers/orderConsumer.ts"
+      ]
+    }
+  ],
+  "optionalExternalIntegrations": [
+    "Stripe payment (local payment used in demo)",
+    "Cloudinary image upload (not used in demo)"
+  ],
   "evidence": {
     "compose": "docker-compose.yml",
-    "orderPublisher": "order-service/src/utils/rabbitmq.ts",
+    "orderPublisher": "order-service/src/controllers/orderController.ts",
     "notificationConsumer": "notification-service/src/consumers/orderConsumer.ts"
-  }
+  },
+  "limits": [
+    "Declared and code-backed topology; this is not distributed tracing",
+    "Asynchronous order-to-notification flow is verified by live checkout and MailHog acceptance"
+  ]
 }

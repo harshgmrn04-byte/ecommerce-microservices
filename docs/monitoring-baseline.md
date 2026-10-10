@@ -1,59 +1,51 @@
 # Monitoring baseline
 
-Captured on 2026-10-10 under a repeatable two-minute local workload.
+Captured at 2026-10-10T10:48:11.688609+00:00 in the local Docker Compose sandbox.
+Regenerate with `python3 -m observability.capture_baseline`.
 
-## Workload
+The capture command runs the existing k6 workload for three minutes: five
+concurrent browsing users and three local checkout arrivals per minute. It
+records service request counts from Prometheus, health and queue observations
+throughout the run, actual container identities/restart deltas, and the raw k6
+summary. It rejects an unhealthy baseline rather than inventing missing values.
 
-- Five concurrent browsing users.
-- Three checkout arrivals per minute.
-- 1,793 HTTP requests at 14.30 requests/second.
-- 601 completed iterations.
+| Signal | Measured baseline |
+| --- | --- |
+| Requests | 2687 |
+| Request rate | 14.47/s |
+| HTTP failures | 0 (0%) |
+| Overall p95 latency | 17.76 ms |
+| Product p95 latency (Prometheus histogram) | 14.12 ms |
+| Checkout | 9/9 successful |
+| Local emails during capture | 9 |
+| Restart deltas during capture | 0 |
 
-Run the same workload again with:
+Measured per-service traffic counts (Prometheus `increase` over the capture
+interval): `{"auth-service": 1, "order-service": 9, "product-service": 1848}`. These
+can include concurrent local probes and are separate from k6's exact request
+count. HTTP metrics exclude health and metrics endpoints. Histogram p95 values
+are estimates based on the configured buckets.
 
-```bash
-docker compose --profile tools run --rm k6
-```
+## Current pause-controller policy
 
-## Normal behavior
+The artifact expires after 24 hours. Product traffic must have at least 100
+requests in the artifact and each live 60-second monitoring window. Admission
+requires error fraction below 1% and p95 below 750 ms, fresh sources, all required
+targets/probes healthy, and zero restart deltas in the captured baseline.
 
-HTTP request metrics exclude `/metrics` and `/health/*` so latency and error
-rates describe application traffic rather than observability probes.
+During a fault, the controller aborts for sustained errors above 5%, sustained
+latency above its baseline-relative ceiling (floor 1,000 ms) or absolute ceiling
+of 2,000 ms, failed critical probes, unexpected non-target unavailability, stale
+or missing telemetry, and traffic invalidity when required by a profile. The
+independent watchdog enforces a single sandbox application target, renewable
+8-second lease and absolute duration deadline. The normal notification profile
+lasts 20 seconds; acceptance lasts 12 seconds. Recovery requires healthy traffic
+and a sustained hold. See `safety/config/policy.json` for exact bounds.
 
-| Signal | Baseline |
-|---|---:|
-| HTTP failures | 0 / 1,793 (0%) |
-| Checks | 1,791 / 1,791 (100%) |
-| Checkout success | 6 / 6 (100%) |
-| Average latency | 9.01 ms |
-| Overall p95 latency | 19.17 ms |
-| Auth p95 latency | 38.68 ms |
-| Product p95 latency | 18.90 ms |
-| Order p95 latency | 32.82 ms |
-| Notification processing p95 | 97.50 ms |
-| RabbitMQ ready messages | 0 |
-| Container restarts | 0 |
-| Firing alerts | 0 |
+The earlier stop demo retains separate legacy thresholds: 100 ms general API
+p95, a 15-second outage ceiling, 20-second maximum experiment, and 30-second
+recovery deadline. These must not be confused with the pause controller policy.
 
-The machine-readable result is stored in
-[`observability/baseline.json`](../observability/baseline.json), and the raw k6
-summary is stored in
-[`observability/results/k6-summary.json`](../observability/results/k6-summary.json).
-
-## Safety thresholds derived from the baseline
-
-- Abort if HTTP 5xx rate exceeds 5% for 15 seconds.
-- Abort if service p95 latency exceeds 100 ms for 15 seconds.
-- Abort if any application target is down for 15 seconds.
-- Abort if the RabbitMQ ready-message backlog exceeds 50.
-- Affect no more than one target per experiment.
-- Limit an experiment to 20 seconds and require recovery within 30 seconds.
-
-Prometheus evaluates the observable thresholds from
-`observability/prometheus/alert-rules.yml`. The remaining execution limits must
-also be enforced by the chaos safety controller.
-
-Rate and latency alerts require at least 0.1 requests/second so a single event
-cannot create a false percentage or histogram alert. The bcrypt-backed login
-route is excluded from the general 100 ms API latency threshold because its
-intentional password hashing cost has a separate performance profile.
+Raw evidence: `observability/results/k6-summary.json` and
+`observability/results/baseline-observations.json`. Current controller admission
+reads `observability/baseline.json` directly.

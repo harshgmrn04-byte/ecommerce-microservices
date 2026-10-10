@@ -1,6 +1,18 @@
 # Day 1 manual kill-switch acceptance
 
-## Verified live run
+## Latest local verification
+
+The original container-stop/file-kill path passed again on 2026-10-10 at
+16:31 IST in this project's Docker Desktop sandbox: 9/9 assertions, checkout
+HTTP 201, one buffered notification, and verified recovery in 9.000 seconds.
+Current evidence is in [acceptance result](../chaos/results/manual-kill-acceptance.json)
+and [experiment result](../chaos/results/manual-kill-experiment.json).
+
+The newer pause watchdog also passed all seven live acceptance cases; see
+[the complete resilience report](resilience-report.md). Both paths are now
+verified. Their kill mechanisms remain separate and are run sequentially.
+
+## Prior GitHub Actions run
 
 Passed on 2026-10-10 at 16:03 IST in a fresh GitHub Actions Docker sandbox:
 [workflow run 38045165667](https://github.com/Tushar476509/ecommerce-microservices/actions/runs/38045165667).
@@ -19,16 +31,16 @@ The workflow tested experiment code at commit `e12694f`.
 | Acceptance assertions | 9/9 passed |
 
 Actual downloaded evidence is committed in
-[acceptance result](../chaos/results/manual-kill-acceptance.json) and
-[experiment result](../chaos/results/manual-kill-experiment.json).
+[prior acceptance result](../chaos/results/manual-kill-prior-acceptance.json) and
+[prior experiment result](../chaos/results/manual-kill-prior-experiment.json).
 Together with the existing dependency/data-flow diagrams, baseline, and prior
 threshold-triggered rollback evidence, this closes the recorded Day 1 kill-switch
 gap. The operator action in this run is automated from a separate process; the
 same file operation can be performed by a person during a presentation.
 
 The existing stop experiment demonstrates automatic rollback at its 15-second
-outage limit. The missing check is whether an externally engaged kill switch
-also removes the fault and restores the application.
+outage limit. The previously missing externally engaged kill-switch check is
+now verified by the local result above and the historical Actions result.
 
 ## Reproduce in a local Docker sandbox
 
